@@ -1,0 +1,38 @@
+div.column {
+    display: block;
+    flex-basis: 0;
+    flex-grow: 1;
+    flex-shrink: 1;
+    padding: 2%;
+}
+
+#grid-container {
+    padding: 3vw 25vw 0 25vw;
+}
+
+.box-yellow {
+    background-color: #F9C30E;
+}
+
+.box-blue {
+    background-color: #0092ED;
+}
+
+.box-orange {
+    background-color: #F9C30E;
+}
+
+.box-green {
+    background-color: #29BF12;
+}
+
+.column.is-1.box-style {
+    border: 1px solid black;
+}
+
+@media only screen and (min-width: 769px) {
+    div.column.is-1 {
+        flex: none;
+        width: 5%;
+    }
+}
