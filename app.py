@@ -27,7 +27,8 @@ def box_index():
     boxes = Box.query.order_by(Box.id).all()
     box_dict = {}
     for box in boxes:
-        box_dict['box_' + str(box.id)] = {'id': box.id, 'color': box.color_num}
+        color = get_color(box.color_num)
+        box_dict['box_' + str(box.id)] = {'id': box.id, 'color': color}
     return jsonify(box_dict)
 
 
@@ -35,8 +36,9 @@ def box_index():
 @app.route('/boxes/<int:box_id>')
 def box_show(box_id):
     box = Box.query.get(box_id)
+    color = get_color(box.color_num)
 
-    return jsonify({'data': {'id': box.id, 'color': box.color_num}})
+    return jsonify({'data': {'id': box.id, 'color': color}})
 
 
 # Route to change box color to a specific color
@@ -96,7 +98,21 @@ def change_white(box_id):
     box.color_num = 4
     db.session.commit()
 
-    return jsonify({'data': box.color_num})
+    return jsonify({'data': "You successfully removed the color from the tile"})
+
+
+# Function to return a color based on the color id
+def get_color(color_id):
+    if color_id == 0:
+        return "yellow"
+    elif color_id == 1:
+        return "blue"
+    elif color_id == 2:
+        return "orange"
+    elif color_id == 3:
+        return "green"
+    elif color_id == 4:
+        return "white"
 
 
 if __name__ == '__main__':
