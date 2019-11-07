@@ -92,7 +92,7 @@ def switch_color(box_id, color):
 
 
 # Route to change the box color to white
-@app.route('/change/<int:box_id>/white', methods=['DELETE'])
+@app.route('/delete/<int:box_id>', methods=['DELETE'])
 def change_white(box_id):
     box = Box.query.get(box_id)
     box.color_num = 4
