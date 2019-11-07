@@ -1,7 +1,8 @@
 from config import *
-from flask import Flask, jsonify, render_template
+from flask import Flask, jsonify, render_template, request
 from flask_migrate import Migrate
 from flask_sqlalchemy import SQLAlchemy
+from functools import wraps
 
 app = Flask(__name__, static_folder='./static')
 
@@ -14,6 +15,19 @@ app.config['SQLALCHEMY_POOL_SIZE'] = int(SQLALCHEMY_POOL_SIZE)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
 
+# Decorator to check for authentication
+def api_key_required(f):
+    @wraps(f)
+    def wrap(*args, **kwargs):
+        key = request.args.get('api_key')
+        if key == "19c9c800-dde2-4c2c-8177-5b3007aa284c":
+            return f(*args, **kwargs)
+        else:
+            return jsonify({"message": "You are not authenticated, you need an API Key to use this route"})
+    return wrap
+
+
+# Route for the homepage of the game
 @app.route('/')
 def hello_world():
     boxes = Box.query.order_by(Box.id).all()
@@ -23,6 +37,7 @@ def hello_world():
 
 # Route to return all boxes
 @app.route('/boxes')
+@api_key_required
 def box_index():
     boxes = Box.query.order_by(Box.id).all()
     box_dict = {}
@@ -34,6 +49,7 @@ def box_index():
 
 # Route to return a specific box by id
 @app.route('/boxes/<int:box_id>')
+@api_key_required
 def box_show(box_id):
     box = Box.query.get(box_id)
     color = get_color(box.color_num)
@@ -43,6 +59,7 @@ def box_show(box_id):
 
 # Route to change box color to a specific color
 @app.route('/change/<int:box_id>/<string:color>', methods=['POST'])
+@api_key_required
 def change_color(box_id, color):
     box = Box.query.get(box_id)
     data = None
@@ -69,6 +86,7 @@ def change_color(box_id, color):
 
 # Route to change color if the square already has a color
 @app.route('/change/<int:box_id>/<string:color>', methods=['PUT'])
+@api_key_required
 def switch_color(box_id, color):
     box = Box.query.get(box_id)
     data = None
@@ -93,6 +111,7 @@ def switch_color(box_id, color):
 
 # Route to change the box color to white
 @app.route('/delete/<int:box_id>', methods=['DELETE'])
+@api_key_required
 def change_white(box_id):
     box = Box.query.get(box_id)
     box.color_num = 4
