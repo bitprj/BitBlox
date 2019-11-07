@@ -10,7 +10,7 @@ migrate = Migrate(app, db)
 
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
-app.config['SQLALCHEMY_POOL_SIZE'] = SQLALCHEMY_POOL_SIZE
+app.config['SQLALCHEMY_POOL_SIZE'] = int(SQLALCHEMY_POOL_SIZE)
 app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
 
@@ -21,6 +21,24 @@ def hello_world():
     return render_template('BitBlox.html', boxes=boxes)
 
 
+# Route to return all boxes
+@app.route('/boxes')
+def box_index():
+    boxes = Box.query.order_by(Box.id).all()
+    box_dict = {}
+    for box in boxes:
+        box_dict['box_' + str(box.id)] = {'id': box.id, 'color': box.color_num}
+    return jsonify(box_dict)
+
+
+# Route to return a specific box by id
+@app.route('/boxes/<int:box_id>')
+def box_show(box_id):
+    box = Box.query.get(box_id)
+
+    return jsonify({'data': {'id': box.id, 'color': box.color_num}})
+
+
 # Route to change box color to a specific color
 @app.route('/change/<int:box_id>/<string:color>', methods=['POST'])
 def change_color(box_id, color):
@@ -28,6 +46,7 @@ def change_color(box_id, color):
     data = None
 
     if box.color_num == 4:
+        data = "You successfully changed the title color!"
         if color == "yellow":
             box.color_num = 0
         elif color == "blue":
@@ -36,7 +55,8 @@ def change_color(box_id, color):
             box.color_num = 2
         elif color == "green":
             box.color_num = 3
-        data = "You successfully changed the title color!"
+        else:
+            data = "Color does not exist."
     else:
         data = "You cannot send a POST request to an already colored tile. You have to use a PUT request."
 
