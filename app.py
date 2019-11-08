@@ -134,6 +134,18 @@ def get_color(color_id):
         return "white"
 
 
+# Function to wipe out the board
+def clear():
+    boxes = Box.query.all()
+    for box in boxes:
+        if box.color_num != 4:
+            box.color_num = 4
+
+    db.session.commit()
+
+    return
+
+
 if __name__ == '__main__':
     app.run()
 
