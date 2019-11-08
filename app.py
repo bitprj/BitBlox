@@ -20,7 +20,7 @@ def api_key_required(f):
     @wraps(f)
     def wrap(*args, **kwargs):
         key = request.args.get('api_key')
-        if key == "19c9c800-dde2-4c2c-8177-5b3007aa284c":
+        if key == "thisistheapikey":
             return f(*args, **kwargs)
         else:
             return jsonify({"message": "You are not authenticated, you need an API Key to use this route"})
