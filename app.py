@@ -12,7 +12,6 @@ migrate = Migrate(app, db)
 app.config['SECRET_KEY'] = SECRET_KEY
 app.config['SQLALCHEMY_DATABASE_URI'] = SQLALCHEMY_DATABASE_URI
 app.config['SQLALCHEMY_POOL_SIZE'] = int(SQLALCHEMY_POOL_SIZE)
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = SQLALCHEMY_TRACK_MODIFICATIONS
 
 
 # Decorator to check for authentication
